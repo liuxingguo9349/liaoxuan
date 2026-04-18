@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>辽选第一批层级自测器</title>
+    <meta
+      name="description"
+      content="基于清北单列放宽 + 38所主池并档模型的辽宁定向选调第一批层级自测网页。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="ambient ambient-one"></div>
+      <div class="ambient ambient-two"></div>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">辽宁定向选调 · 第一批经验模型</p>
+          <h1>辽选第一批层级自测器</h1>
+          <p class="hero-text">
+            按“清北单列放宽 + 38所主池并档”来做的经验版网页。它不是官方判定器，
+            但适合快速判断你更像能看到省直、市直、区直，还是街道及其他地市直。
+          </p>
+          <div class="hero-tags">
+            <span>清北单列</span>
+            <span>38所主池并档</span>
+            <span>本科决定上限</span>
+            <span>班级/专业前60%影响很大</span>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="mini-stat">
+            <span class="mini-label">模型前提</span>
+            <strong>经验判断，不替代系统</strong>
+          </div>
+          <div class="mini-stat">
+            <span class="mini-label">38所主池</span>
+            <strong>除清北、中央民族外的其余985 + 中政 + 中财</strong>
+          </div>
+          <div class="mini-stat">
+            <span class="mini-label">最重要变量</span>
+            <strong>本科背景、班级/专业前60%、党员、学干/校奖/入伍</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="card assumptions-card">
+          <div class="section-head">
+            <p class="section-kicker">使用前先看</p>
+            <h2>这版网页默认的判断假设</h2>
+          </div>
+
+          <div class="assumption-grid">
+            <article class="assumption-item">
+              <h3>1. 清北单独放宽</h3>
+              <p>
+                只要本硕博任一阶段有清北经历，就按“放宽一项到两项”的经验逻辑处理，
+                对省直和沈大市直尤其有帮助。
+              </p>
+            </article>
+
+            <article class="assumption-item">
+              <h3>2. 38所主池并档</h3>
+              <p>
+                默认把“除清北、中央民族大学外的其余985”再加上“中国政法大学、中央财经大学”
+                视作同一主池档位。
+              </p>
+            </article>
+
+            <article class="assumption-item">
+              <h3>3. 新双一流单独一层</h3>
+              <p>
+                中央民族大学和其他双一流单列为“新双一流”，不直接等同双非，
+                但通常也不按38所主池来处理。
+              </p>
+            </article>
+
+            <article class="assumption-item">
+              <h3>4. 本科更像层级上限</h3>
+              <p>
+                硕博学校更像决定你是否有资格报第一批，本科背景更像决定进入系统后能往上探到哪一层。
+              </p>
+            </article>
+
+            <article class="assumption-item">
+              <h3>5. 班级/专业前60%对硕士更重要</h3>
+              <p>
+                在非清北、非博士样本里，班级/专业成绩前60%几乎是最强分水岭之一；不在班级/专业成绩前60%时，层级通常会明显下沉。
+              </p>
+            </article>
+
+            <article class="assumption-item">
+              <h3>6. 博士和“清北+双非”单独看</h3>
+              <p>
+                博士通常更看党员、学干、校奖三项；“清北经历 + 本科双非”则更像清北放宽和双非拖层级同时存在的对冲样本。
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <form id="self-test-form" class="card form-card">
+            <div class="section-head">
+              <p class="section-kicker">开始自测</p>
+              <h2>填写你的基本情况</h2>
+            </div>
+
+            <fieldset class="group">
+              <legend>报考层次</legend>
+              <div class="pill-group">
+                <label class="choice-pill">
+                  <input type="radio" name="applyLevel" value="bachelor" checked />
+                  <span>本科报考</span>
+                </label>
+                <label class="choice-pill">
+                  <input type="radio" name="applyLevel" value="master" />
+                  <span>硕士报考</span>
+                </label>
+                <label class="choice-pill">
+                  <input type="radio" name="applyLevel" value="doctor" />
+                  <span>博士报考</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group hidden-section" id="doctor-tier-group">
+              <legend>博士学校档位</legend>
+              <p class="group-hint">
+                博士报考时，先看博士学校是否在清北或38所主池里；这一项通常最像第一批报考资格的入口。
+              </p>
+              <div class="option-grid">
+                <label class="choice-card">
+                  <input type="radio" name="doctorTier" value="qingbei" />
+                  <span class="choice-title">清北</span>
+                  <span class="choice-note">清华 / 北大</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="doctorTier" value="main" checked />
+                  <span class="choice-title">38所主池</span>
+                  <span class="choice-note">博士第一批入口重点看这里</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="doctorTier" value="newd1" />
+                  <span class="choice-title">新双一流</span>
+                  <span class="choice-note">通常要先核实资格</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="doctorTier" value="doublenon" />
+                  <span class="choice-title">双非 / 其他</span>
+                  <span class="choice-note">通常不直接按第一批处理</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group hidden-section" id="master-tier-group">
+              <legend>硕士学校档位</legend>
+              <p class="group-hint">
+                硕士报考时，这一项通常比本科更像“第一批报考资格”的入口；博士报考时，也保留这一步作为经历信息。
+              </p>
+              <div class="option-grid">
+                <label class="choice-card">
+                  <input type="radio" name="masterTier" value="qingbei" />
+                  <span class="choice-title">清北</span>
+                  <span class="choice-note">清华 / 北大</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="masterTier" value="main" checked />
+                  <span class="choice-title">38所主池</span>
+                  <span class="choice-note">常见第一批入口</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="masterTier" value="newd1" />
+                  <span class="choice-title">新双一流</span>
+                  <span class="choice-note">通常不直接按主池处理</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="masterTier" value="doublenon" />
+                  <span class="choice-title">双非 / 其他</span>
+                  <span class="choice-note">先核实是否属于第一批</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group" id="undergrad-tier-group">
+              <legend>本科学校档位</legend>
+              <p class="group-hint">
+                本科背景更像层级上限。即使硕士或博士学校很好，本科仍然会继续影响你最终能看到的岗位层级。
+              </p>
+              <div class="option-grid">
+                <label class="choice-card">
+                  <input type="radio" name="undergradTier" value="qingbei" />
+                  <span class="choice-title">清北</span>
+                  <span class="choice-note">清华 / 北大</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="undergradTier" value="main" checked />
+                  <span class="choice-title">38所主池</span>
+                  <span class="choice-note">主池并档处理</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="undergradTier" value="newd1" />
+                  <span class="choice-title">新双一流</span>
+                  <span class="choice-note">中央民族 + 其他双一流</span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="undergradTier" value="doublenon" />
+                  <span class="choice-title">双非</span>
+                  <span class="choice-note">最容易被卡本科上限</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>关键条件</legend>
+              <div class="toggle-grid">
+                <label class="toggle-chip">
+                  <input type="checkbox" name="party" />
+                  <span>中共党员（含预备党员）</span>
+                </label>
+                <label class="toggle-chip">
+                  <input type="checkbox" name="cadre" />
+                  <span>学生干部经历</span>
+                </label>
+                <label class="toggle-chip">
+                  <input type="checkbox" name="award" />
+                  <span>校级奖励 / 奖学金</span>
+                </label>
+                <label class="toggle-chip">
+                  <input type="checkbox" name="military" />
+                  <span>参军入伍经历</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>班级/专业成绩前60%</legend>
+              <div class="pill-group">
+                <label class="choice-pill">
+                  <input type="radio" name="top60" value="yes" checked />
+                  <span>是</span>
+                </label>
+                <label class="choice-pill">
+                  <input type="radio" name="top60" value="no" />
+                  <span>否</span>
+                </label>
+                <label class="choice-pill">
+                  <input type="radio" name="top60" value="unknown" />
+                  <span>不确定</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group" id="undergrad-veto-group">
+              <legend>本科一票否决项</legend>
+              <p class="group-hint">
+                只要本科存在以下任意一项，就按“一票否决”处理。这个否决优先级高于清北放宽和博士放宽。
+              </p>
+              <div class="toggle-grid">
+                <label class="toggle-chip">
+                  <input type="checkbox" name="vetoUpgrade" />
+                  <span>专升本</span>
+                </label>
+                <label class="toggle-chip">
+                  <input type="checkbox" name="vetoIndependent" />
+                  <span>独立学院</span>
+                </label>
+                <label class="toggle-chip">
+                  <input type="checkbox" name="vetoPrivate" />
+                  <span>民办本科</span>
+                </label>
+                <label class="toggle-chip">
+                  <input type="checkbox" name="vetoSpring" />
+                  <span>春季高考</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="group">
+              <legend>基础资格确认</legend>
+              <div class="toggle-grid single-column">
+                <label class="toggle-chip emphasis">
+                  <input type="checkbox" name="baselineChecked" checked />
+                  <span>我已确认满足应届、年龄、培养方式等公告硬条件</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="actions">
+              <button type="submit" class="primary-btn">生成判断结果</button>
+              <button type="button" id="fill-demo" class="secondary-btn">填入一个示例</button>
+            </div>
+          </form>
+
+          <aside class="card result-card" id="result-panel">
+            <div class="section-head">
+              <p class="section-kicker">判断结果</p>
+              <h2>你最可能看到的层级</h2>
+            </div>
+
+            <div class="result-shell">
+              <div class="result-banner" id="result-badge">等待填写</div>
+
+              <div class="result-main">
+                <p class="result-caption">第一批报考资格</p>
+                <h3 id="entry-status">先填写左侧信息</h3>
+                <p id="result-summary" class="result-summary">
+                  结果会显示最可能层级、波动区间、主要原因和需要留意的风险点。
+                </p>
+              </div>
+
+              <div class="meter-wrap">
+                <div class="meter-label-row">
+                  <span>预测层级</span>
+                  <span id="confidence-text">置信度：待判断</span>
+                </div>
+                <div class="tier-meter">
+                  <div id="tier-meter-fill" class="tier-meter-fill"></div>
+                </div>
+                <div class="meter-scale">
+                  <span>街道</span>
+                  <span>区直</span>
+                  <span>市直</span>
+                  <span>省直</span>
+                </div>
+              </div>
+
+              <div class="result-pills">
+                <div class="result-pill">
+                  <span class="pill-label">最可能层级</span>
+                  <strong id="primary-level">待判断</strong>
+                </div>
+                <div class="result-pill">
+                  <span class="pill-label">波动区间</span>
+                  <strong id="level-range">待判断</strong>
+                </div>
+              </div>
+
+              <div class="result-columns">
+                <section>
+                  <h4>为什么是这个层级</h4>
+                  <ul id="reason-list" class="bullet-list">
+                    <li>先提交信息后展示。</li>
+                  </ul>
+                </section>
+
+                <section>
+                  <h4>还要留意</h4>
+                  <ul id="risk-list" class="bullet-list">
+                    <li>这是一套经验模型，不等于官方系统。</li>
+                  </ul>
+                </section>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

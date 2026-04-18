@@ -103,7 +103,7 @@
         </section>
 
         <section class="content-grid">
-          <form id="self-test-form" class="card form-card">
+          <form id="self-test-form" class="card form-card" action="javascript:void(0)" novalidate>
             <div class="section-head">
               <p class="section-kicker">开始自测</p>
               <h2>填写你的基本情况</h2>
@@ -290,7 +290,7 @@
             </fieldset>
 
             <div class="actions">
-              <button type="submit" class="primary-btn">生成判断结果</button>
+              <button type="button" id="generate-result" class="primary-btn">生成判断结果</button>
               <button type="button" id="fill-demo" class="secondary-btn">填入一个示例</button>
             </div>
           </form>

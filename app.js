@@ -66,6 +66,7 @@ const VETO_LABEL = {
 
 const form = document.querySelector("#self-test-form");
 const demoButton = document.querySelector("#fill-demo");
+const generateButton = document.querySelector("#generate-result");
 
 const visibleGroups = {
   master: document.querySelector("#master-tier-group"),
@@ -617,6 +618,10 @@ form.addEventListener("change", (event) => {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+  renderResult(evaluateForm());
+});
+
+generateButton.addEventListener("click", () => {
   renderResult(evaluateForm());
 });
 

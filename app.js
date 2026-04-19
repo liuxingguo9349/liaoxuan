@@ -53,7 +53,7 @@ const TIER_LABEL = {
 const HIGHLIGHT_LABEL = {
   party: "党员",
   cadre: "学生干部",
-  award: "校级奖励",
+  award: "校级奖励/奖学金",
   military: "入伍经历",
 };
 
@@ -341,19 +341,86 @@ function evaluateQualification(data) {
 }
 
 function evaluateDoctor(data) {
+  const extraCount = [data.cadre, data.award, data.military].filter(Boolean).length;
+  const allMainOrQingbeiChain = [data.doctorTier, data.masterTier, data.undergradTier].every(
+    (tier) => tier === "main" || tier === "qingbei"
+  );
+  const fullMainChain =
+    data.doctorTier === "main" &&
+    data.masterTier === "main" &&
+    data.undergradTier === "main";
+  const qingbeiStrongHybridChain =
+    data.anyQingbei &&
+    (data.doctorTier === "main" || data.doctorTier === "qingbei") &&
+    [data.masterTier, data.undergradTier].some(
+      (tier) => tier === "main" || tier === "qingbei"
+    ) &&
+    [data.masterTier, data.undergradTier].some((tier) => tier === "newd1");
+  const mixedStrongChain =
+    data.doctorTier === "main" &&
+    ((data.masterTier === "main" && data.undergradTier === "newd1") ||
+      (data.masterTier === "newd1" && data.undergradTier === "main"));
+
   const reasons = [
     getEntryReason(data.applyLevel, data.highestTier),
     getUndergradReason(data.undergradTier),
-    "博士按四项来判断：党员、学生干部、校级奖励、入伍经历；其中党员的权重仍明显高于另外三项。",
+    "博士按四项来判断：党员、学生干部、校级奖励/奖学金、入伍经历；其中党员的权重仍明显高于另外三项，另外三项按同权补位处理。",
     `你当前满足的四项是：${getSelectedHighlightLabels(data).join("、")}。`,
   ];
   const risks = [];
 
   let score = getDoctorBaseScore(data);
+  let usedQingbeiRelax = false;
 
-  if (data.anyQingbei && score < 3) {
+  if (allMainOrQingbeiChain && data.anyQingbei) {
+    usedQingbeiRelax = true;
+    reasons.push("你的本硕博学历链已经进入“清北 + 38所主池”这一档，这是比纯38所主池更强的一档。");
+    if (data.party || extraCount >= 1) {
+      score = Math.max(score, 3);
+      reasons.push("按你这版经验模型，清北在这条强链条之上还能再放宽一项，所以这类样本只要党员在，或者学生干部/校级奖励/奖学金/入伍里至少有一项在，就可以把省直门槛视作打开。");
+    } else {
+      score = Math.max(score, 2);
+      risks.push("即使学历链很强，党员和三项补位都全缺时，通常也更像先从市直起步。");
+    }
+  } else if (fullMainChain) {
+    reasons.push("你的本硕博都在38所主池里，这条博士学历链属于最强的一档。");
+    if (data.party) {
+      score = Math.max(score, 3);
+      reasons.push("按你这版经验模型，这类全38所主池博士只要党员在，就可以把省直门槛视作已经打开。");
+    } else {
+      score = Math.max(score, 2);
+      risks.push("即使本硕博都在38所主池，缺党员时通常也更像从市直起步，而不是直接稳到省直。");
+    }
+  } else if (qingbeiStrongHybridChain) {
+    usedQingbeiRelax = true;
+    reasons.push("你的博士链条是“清北/38所主池 + 新双一流”的强混合链，这一档应比普通“38所主池 + 新双一流”再放宽一项。");
+    if (data.party || extraCount >= 2) {
+      score = Math.max(score, 3);
+      reasons.push("按你这版经验模型，这类清北博士混合强链会在普通强链基础上再松一档，所以党员单独成立，或学生干部/校级奖励/奖学金/入伍里满足两项，都可以把结果上探到省直。");
+    } else if (extraCount >= 1) {
+      score = Math.max(score, 2);
+      reasons.push("当前虽然没有党员，但清北会把这条混合强链再往上托一档；只要学生干部/校级奖励/奖学金/入伍里已有一项，就更像市直。");
+    } else {
+      score = Math.max(score, 1);
+      risks.push("即使是清北博士混合强链，通常也仍需要至少一项亮点条件，层级才会稳定上探。");
+    }
+  } else if (mixedStrongChain) {
+    reasons.push("你的博士在38所主池，且本硕一段在38所主池、另一段在新双一流，这条学历链可以按强链条再放宽一项来理解。");
+    if (data.party && extraCount >= 1) {
+      score = Math.max(score, 3);
+      reasons.push("你同时满足党员和学生干部/校级奖励/奖学金/入伍三项中的至少一项，所以可以按省直来理解。");
+    } else if (data.party || extraCount >= 2) {
+      score = Math.max(score, 2);
+      risks.push("这条强链条再往省直上探时，通常仍更依赖“党员 + 至少一个补位项”的组合。");
+    } else if (extraCount >= 1) {
+      score = Math.max(score, 1);
+      risks.push("没有党员且补位项只有一项时，这条博士强链通常更像区直附近，而不是直接冲到市直。");
+    }
+  }
+
+  if (data.anyQingbei && !usedQingbeiRelax && score < 3) {
     score += 1;
-    reasons.push("你本硕博里至少有一段是清北，清北路径会把博士样本往上抬一档。");
+    reasons.push("你的本硕博里至少还有一段是清北，但不属于上面已单独处理的清北强链，所以这里再按“清北额外放宽一项”做一次补充修正。");
   }
 
   if (data.undergradTier === "doublenon" && score > 0) {
